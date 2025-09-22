@@ -17,32 +17,48 @@ Write a Alpha beta pruning algorithm to find the optimal value of MAX Player fro
 ### Program:
 
 ```
-import math
+# Initial values of Alpha and Beta
+MAX, MIN = 1000, -1000
 
-# Minimax function
-def minimax(curDepth, nodeIndex, maxTurn, scores, targetDepth):
-    # Base case: target depth reached
-    if curDepth == targetDepth:
-        return scores[nodeIndex]
+# Returns optimal value for current player
+# (Initially called for root and maximizer)
+def minimax(depth, nodeIndex, maximizingPlayer, values, alpha, beta):
+    # Terminating condition: leaf node is reached
+    if depth == 3:
+        return values[nodeIndex]
 
-    # If it's the maximizing player's turn
-    if maxTurn:
-        return max(
-            minimax(curDepth + 1, nodeIndex * 2, False, scores, targetDepth),
-            minimax(curDepth + 1, nodeIndex * 2 + 1, False, scores, targetDepth)
-        )
+    if maximizingPlayer:
+        best = MIN
+
+        # Recur for left and right children
+        for i in range(0, 2):
+            val = minimax(depth + 1, nodeIndex * 2 + i, False, values, alpha, beta)
+            best = max(best, val)
+            alpha = max(alpha, best)
+
+            # Alpha Beta Pruning
+            if beta <= alpha:
+                break
+        return best
+
     else:
-        # If it's the minimizing player's turn
-        return min(
-            minimax(curDepth + 1, nodeIndex * 2, True, scores, targetDepth),
-            minimax(curDepth + 1, nodeIndex * 2 + 1, True, scores, targetDepth)
-        )
+        best = MAX
+
+        # Recur for left and right children
+        for i in range(0, 2):
+            val = minimax(depth + 1, nodeIndex * 2 + i, True, values, alpha, beta)
+            best = min(best, val)
+            beta = min(beta, best)
+
+            # Alpha Beta Pruning
+            if beta <= alpha:
+                break
+        return best
+
 
 # Driver code
-scores = [3, 5, 2, 9, 12, 5, 23, 20]
-treeDepth = int(math.log(len(scores), 2))  # Depth of the game tree
-
-print("The optimal value is:", minimax(0, 0, True, scores, treeDepth))
+values = [3, 5, 6, 9, 1, 2, 0, -1]
+print("The optimal value is:", minimax(0, 0, True, values, MIN, MAX))
 
 ```
 
@@ -60,7 +76,10 @@ print("The optimal value is:", minimax(0, 0, True, scores, treeDepth))
 
 ### Output:
 
-<img width="416" height="121" alt="image" src="https://github.com/user-attachments/assets/fd544c4d-558f-44ca-93a1-69a05b1c0fe1" />
+<img width="414" height="138" alt="image" src="https://github.com/user-attachments/assets/bda04edb-a9fc-4f78-acd7-252470435b68" />
+
+
+
 
 
 
